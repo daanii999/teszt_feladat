@@ -59,4 +59,29 @@ class Group extends \yii\db\ActiveRecord
 		if(!$justParents) return Group::find()->where(['is_deleted' => 0])->all();
 		else return Group::find()->where(['parent_id' => 0])->andWhere(['is_deleted' => 0])->all();
 	}
+	
+	public static function getGroupList($justParents = false) {
+		$Groups = Group::getHierarchy($justParents);
+		$list = '';
+		foreach($Groups as $group) {
+			if($group->parent_id == 0) {
+				$list .= '<span class="groups">'.$group->name.'</span><br />';
+				if(!$justParents) $list .= Group::getChildrens($Groups, $group->id, 1);
+			}
+		}
+		return $list;
+	}
+	
+	public static function getChildrens($Groups, $parent, $n) {
+		$clist = '';
+		foreach($Groups as $group) {
+			if($group->parent_id == $parent) {
+				for($i = 1; $i <= $n; $i++) $clist .= '&emsp;';
+				$clist .= '<span class="groups">';
+				$clist .= $group->name.'</span><br />';
+				$clist .= Group::getChildrens($Groups, $group->id, $n+1);
+			}
+		}
+		return $clist;
+	}
 }

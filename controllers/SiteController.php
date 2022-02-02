@@ -62,7 +62,7 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-		$Groups = Group::getHierarchy();
+		$Groups = Group::getGroupList();
         if (Yii::$app->user->can('ManageGroups')) return $this->render('index', ['Groups'=>$Groups]);
 		else return $this->render('index');
     }
